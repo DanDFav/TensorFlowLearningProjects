@@ -10,7 +10,8 @@ async function speechRecogMain(){
     const canvas = document.getElementById("drawingCanvas");
     const context = canvas.getContext("2d");
 
-    context.lineWidth = 5; 
+    context.lineWidth = 15; 
+    context.lineHeight = 15; 
 
     var xPos = 250; 
     var yPos = 250; 
@@ -41,15 +42,15 @@ function draw(context, xPos, yPos) {
 
         xPos = newXPos; 
         yPos = newYPos;
-    });
+    }, {probabilityThreshold: 0.95});
 }
 
 function findNewPos(prevX, prevY, direction){
     return {
-        "left": [prevX - 5, prevY],
-        "right": [prevX + 5, prevY], 
-        "up": [prevX, prevY - 5], 
-        "down": [prevX, prevY + 5], 
+        "left": [prevX - 15, prevY],
+        "right": [prevX + 15, prevY], 
+        "up": [prevX, prevY - 15], 
+        "down": [prevX, prevY + 15], 
         "default": [prevX, prevY]
     }[direction]
 }
