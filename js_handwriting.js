@@ -31,7 +31,7 @@ neuralNetworkHW.add(tf.layers.flatten());
 neuralNetworkHW.add(tf.layers.dense({
     units: 10, 
     kernerlInitializer: "varianceScaling", 
-    activation: "softmax"
+    activation: "relu"
 }))
 
 neuralNetworkHW.compile({
