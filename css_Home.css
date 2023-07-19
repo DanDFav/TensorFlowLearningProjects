@@ -1,0 +1,58 @@
+
+body {
+    width: 90%;
+    margin: auto;
+    background-color: rgb(233, 211, 253);
+    font-family:  'Franklin Gothic Medium';
+    padding: 30px;
+
+    
+    background-image: url("https://www.publicdomainpictures.net/pictures/370000/velka/tyrannosaurus-rex-1602841682PGN.jpg");
+    background-repeat: no-repeat;
+    
+}
+
+h1 {
+    color: aqua;
+    background-color: black;
+    font-size: 50px;
+
+    
+    text-align: center;
+    text-transform: uppercase;
+
+    margin: auto;
+    padding: 20px; 
+}
+
+p {
+    margin: auto;
+    background-color: rgb(233, 211, 253);
+    padding: 20px;
+}
+
+ul {
+    margin: auto; 
+    padding: 10px;
+    overflow: hidden;
+    list-style-type: none;
+    background-color: rgb(233, 211, 253);
+}
+
+li {
+    float : left; 
+}
+
+li a {
+    color: aquamarine;
+    padding: 10px;
+}
+
+li a:hover {
+    color: black;
+}
+
+a {
+    margin: auto;
+    background-color: rgb(233, 211, 253);
+}
