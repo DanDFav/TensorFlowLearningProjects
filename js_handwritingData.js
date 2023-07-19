@@ -7,6 +7,11 @@ const numberOfTrainingSamples = numberOfDataSetSamples * 0.8;
 const numberOfClasses = 10; 
 
 class data {
+
+    constructor(){
+
+    }
+
     async load(){
         const image = new Image(); 
         const canvas = document.createElement("canvas");
@@ -43,5 +48,29 @@ class data {
 
         this.trainY = this.labels.slice(0, numberOfClasses * numberOfTrainingSamples);
         this.testY = this.labels.slice(numberOfClasses * numberOfTrainingSamples);  
+    }
+
+    getTrainingBatch(batchSize){
+        return this.getNextBatch(batchSize, data, index);
+    }
+
+    getNextBatch(batchSize, data, index) {
+        const imagesArray = new Float32Array(batchSize * imageSize); 
+        const labelsArray = new Uint8Array(batchSize * numberOfClasses); 
+        for(let i = 0; i < batchSize; i++){
+            const currentIndex = index; 
+            const image = data[0].slice(currentIndex * imageSize, currentIndex * imageSize + imageSize); 
+
+            imagesArray.set(image, i * imageSize);
+
+            const label = data[1].slice(currentIndex * numberOfClasses, currentIndex * numberOfClasses + numberOfClasses)
+            labelsArray.set(label, i * numberOfClasses); 
+
+            const Xtensor = tf.tensor2d(imagesArray, [batchSize, imageSize]);
+            const Ytensor = tf.tensor2d(labelsArray, [batchSize, numberOfClasses]);
+
+            return {Xtensor, Ytensor};
+        }
+
     }
 }

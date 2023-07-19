@@ -1,5 +1,4 @@
-async function handWritingMain(){
-    const neuralNetwork = tf.sequential(); 
+const neuralNetwork = tf.sequential(); 
     neuralNetwork.add(tf.layers.conv2d({
         inputShape: [28,28,1], 
         kernelSize: 5, 
@@ -41,4 +40,31 @@ async function handWritingMain(){
         metrics: ["accuracy"]
     });
 
+const batchSize = 64; 
+
+async function handWritingMain(){
+    await loadData(); 
+
 }
+
+async function trainModel(){
+    for(let i = 0; i < batchSize; i++){
+        data.getTrainingBatch(batchSize);
+    }
+
+    await neuralNetwork.fit(
+        
+
+    ); 
+}
+
+
+let data; 
+async function loadData(){
+    data = new data();
+
+    await data.load(); 
+
+    await trainModel(); 
+}
+
