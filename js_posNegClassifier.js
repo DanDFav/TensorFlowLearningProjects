@@ -11,41 +11,48 @@ class Model {
 
         return this; 
     }
+
+    makeAPrediction(text){
+        const cleanText = text.trim().
+            toLowerCase().
+            replace(/(\.|\,|\!)/g,"").
+            split(" ");
+    
+        const textBuffer = tf.buffer([1, this.maxLength], "float32");
+    
+        for(let i = 0; i < cleanText.length; ++i){
+            const word = cleanText[i]; 
+            textBuffer.set(this.wordIndex[word] + this.indexFrom, 0, i)
+    
+        }
+    
+        const x = textBuffer.toTensor(); 
+    
+        const prediction = this.neuralNetwork.predict(x); 
+    
+        const score = prediction.dataSync()[0];
+
+
+
+        console.log(score);
+    }
 }
+
+let neuralNetwork;
 
 async function posNegMain(){
-    const neuralNetwork = await new Model().init(); 
+    neuralNetwork = await new Model().init(); 
     console.log(neuralNetwork);
 
-    getUserInput(); 
-
+    getUserInput(x => neuralNetwork.makeAPrediction(x)); 
 }
 
-function makeAPrediction(text){
-    const cleanText = text.trim().
-        toLowerCase().
-        replace(/(\.|\,|\!)/g,"").
-        split(" ");
-
-    const textBuffer = tf.buffer([1, this.maxLength], "float32");
-
-    for(let i = 0; i < cleanText.length; ++i){
-        const word = cleanText[i]; 
-        textBuffer.set(this.wordIndex[word] + this.indexFrom, 0, i)
-
-    }
-
-    const x = textBuffer.toTensor(); 
-
-    
-}
-
-function getUserInput(){
+function getUserInput(predict){
     const userInput = document.getElementById("userInputPos"); 
 
     userInput.addEventListener("input", () => {
         const userInput = document.getElementById("userInputPos"); 
 
-        makeAPrediction(userInput.value);
+        predict(userInput.value);
     });
 }
