@@ -18,6 +18,7 @@ async function speechRecogMain(){
     draw(context, xPos, yPos);
 }
 
+
 function draw(context, xPos, yPos) {
     const detectedWords = modelSR.wordLabels();
     
@@ -30,5 +31,25 @@ function draw(context, xPos, yPos) {
 
         var directionOfDrawing = scores[0].word;
         console.log(directionOfDrawing);
+
+        var [newXPos, newYPos] = findNewPos(xPos, yPos, directionOfDrawing);
+
+        context.moveTo(xPos, yPos);
+        context.lineTo(newXPos, newYPos);
+        context.closePath();
+        context.stroke(); 
+
+        xPos = newXPos; 
+        yPos = newYPos;
     });
+}
+
+function findNewPos(prevX, prevY, direction){
+    return {
+        "left": [prevX - 5, prevY],
+        "right": [prevX + 5, prevY], 
+        "up": [prevX, prevY - 5], 
+        "down": [prevX, prevY + 5], 
+        "default": [prevX, prevY]
+    }[direction]
 }
