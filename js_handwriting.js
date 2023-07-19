@@ -41,6 +41,9 @@ const neuralNetwork = tf.sequential();
     });
 
 const batchSize = 64; 
+const numberOfTrainingBatches = 150;
+const testingInterval = 5; 
+const numberOfTestingBatches = 1000; 
 
 async function handWritingMain(){
     await loadData(); 
@@ -48,12 +51,19 @@ async function handWritingMain(){
 }
 
 async function trainModel(){
-    for(let i = 0; i < batchSize; i++){
+    for(let i = 0; i < numberOfTrainingBatches; i++){
         data.getTrainingBatch(batchSize);
+        let validationData;
+        let testBatch; 
+        if(i % testingInterval == 0){
+            testBatch = data.getTestingBatch(numberOfTestingBatches); 
+            validationData = [testBatch.Xtensor.reshape([numberOfTestingBatches, 28, 28, 1]), testBatch.Ytensor];
+        }
+
     }
 
+    
     await neuralNetwork.fit(
-        
         
 
     ); 

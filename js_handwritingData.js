@@ -4,12 +4,14 @@ const chunkSize = 5000;
 const imagePath = "https://storage.googleapis.com/learnjs-data/model-builder/mnist_images.png";
 const labelPath = "https://storage.googleapis.com/learnjs-data/model-builder/mnist_labels_uint8";
 const numberOfTrainingSamples = numberOfDataSetSamples * 0.8;  
+const numberOfTestingSamples = numberOfDataSetSamples - numberOfTrainingSamples
 const numberOfClasses = 10; 
 
 class data {
 
     constructor(){
         this.shuffledTrainingIndex = 0; 
+        this.shuffledTestingIndex = 0; 
     }
 
     async load(){
@@ -44,6 +46,7 @@ class data {
         this.labels = new Uint8Array(await labelsResponse.arrayBuffer());
 
         this.trainingIndicies = tf.util.createShuffledIndicies(numberOfTrainingSamples); 
+        this.testingIndicies = tf.util.createShuffledIndicies(numberOfTestingSamples);
 
         this.trainX = this.datasetImages.slice(0, imageSize * numberOfTrainingSamples); 
         this.testX = this.datasetImages.slice(imageSize * numberOfTrainingSamples);
@@ -54,10 +57,18 @@ class data {
 
     getTrainingBatch(batchSize){
         return this.getNextBatch(batchSize, [this.testX, this.trainY], ()=> {
-            this.shuffledTrainingIndex = (this.shuffledTrainingIndex + 1) % this.shuffledTrainingIndex.length;
+            this.shuffledTrainingIndex = (this.shuffledTrainingIndex + 1) % this.trainingIndicies.length;
             return this.trainingIndicies[this.shuffledTrainingIndex]; 
         });
     }
+
+    getTestingBatch(testingBatchSize){
+        return this.getNextBatch(testingBatchSize, [this.testX, this.testY], ()=> {
+            this.shuffledTestingIndex = (this.shuffledTestingIndex + 1) % this.testingIndicies.length; 
+            return this.testingIndicies[this.shuffledTestingIndex];
+        });
+    }
+
 
     getNextBatch(batchSize, data, index) {
         const imagesArray = new Float32Array(batchSize * imageSize); 
@@ -76,6 +87,7 @@ class data {
 
             return {Xtensor, Ytensor};
         }
-
     }
+
+
 }
