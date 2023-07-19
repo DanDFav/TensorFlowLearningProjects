@@ -3,6 +3,8 @@ const imageSize = 784;
 const chunkSize = 5000; 
 const imagePath = "https://storage.googleapis.com/learnjs-data/model-builder/mnist_images.png";
 const labelPath = "https://storage.googleapis.com/learnjs-data/model-builder/mnist_labels_uint8";
+const numberOfTrainingSamples = numberOfDataSetSamples * 0.8;  
+const numberOfClasses = 10; 
 
 class data {
     async load(){
@@ -35,5 +37,11 @@ class data {
         const [imageResponse, labelsResponse] = await Promise.all([imageRequest, labelsRequest]);
 
         this.labels = new Uint8Array(await labelsResponse.arrayBuffer());
+
+        this.trainX = this.datasetImages.slice(0, imageSize * numberOfTrainingSamples); 
+        this.testX = this.datasetImages.slice(imageSize * numberOfTrainingSamples);
+
+        this.trainY = this.labels.slice(0, numberOfClasses * numberOfTrainingSamples);
+        this.testY = this.labels.slice(numberOfClasses * numberOfTrainingSamples);  
     }
 }
