@@ -7,7 +7,7 @@ const numberOfTrainingSamples = numberOfDataSetSamples * 0.8;
 const numberOfTestingSamples = numberOfDataSetSamples - numberOfTrainingSamples
 const numberOfClasses = 10; 
 
-class data {
+class MNISTdata {
 
     constructor(){
         this.shuffledTrainingIndex = 0; 
@@ -23,10 +23,10 @@ class data {
         const imageRequest = new Promise ((resolve, reject) => {
             image.crossOrigin = ""; 
             image.onload = () => {
-                bytesBuffer  = new ArrayBuffer(numberOfDataSetSamples * imageSize * 4); 
-                for(let i = 0; i < numberOfDataSetSamples; i++){
+                const bytesBuffer  = new ArrayBuffer(numberOfDataSetSamples * imageSize * 4); 
+                for(let i = 0; i < numberOfDataSetSamples / chunkSize; i++){
                     const imageBytes = new Float32Array(bytesBuffer, i * imageSize * chunkSize * 4, imageSize * chunkSize); 
-                    context.drawImage(image, 0, i * chunkSize, image.width, chunkSize, 0, 0, image.width, chunkSize)
+                    context.drawImage(image, 0, i * chunkSize, image.width, chunkSize, 0, 0, image.width, chunkSize);
                     const imageData = context.getImageData(0, 0, canvas.width, canvas.height); 
 
                     for(let imageDataIndex = 0; imageDataIndex < imageData.data.length / 4; imageDataIndex++){
@@ -45,8 +45,8 @@ class data {
 
         this.labels = new Uint8Array(await labelsResponse.arrayBuffer());
 
-        this.trainingIndicies = tf.util.createShuffledIndicies(numberOfTrainingSamples); 
-        this.testingIndicies = tf.util.createShuffledIndicies(numberOfTestingSamples);
+        this.trainingIndicies = tf.util.createShuffledIndices(numberOfTrainingSamples); 
+        this.testingIndicies = tf.util.createShuffledIndices(numberOfTestingSamples);
 
         this.trainX = this.datasetImages.slice(0, imageSize * numberOfTrainingSamples); 
         this.testX = this.datasetImages.slice(imageSize * numberOfTrainingSamples);
@@ -56,7 +56,7 @@ class data {
     }
 
     getTrainingBatch(batchSize){
-        return this.getNextBatch(batchSize, [this.testX, this.trainY], ()=> {
+        return this.getNextBatch(batchSize, [this.trainX, this.trainY], ()=> {
             this.shuffledTrainingIndex = (this.shuffledTrainingIndex + 1) % this.trainingIndicies.length;
             return this.trainingIndicies[this.shuffledTrainingIndex]; 
         });
@@ -74,7 +74,7 @@ class data {
         const imagesArray = new Float32Array(batchSize * imageSize); 
         const labelsArray = new Uint8Array(batchSize * numberOfClasses); 
         for(let i = 0; i < batchSize; i++){
-            const currentIndex = index; 
+            const currentIndex = index(); 
             const image = data[0].slice(currentIndex * imageSize, currentIndex * imageSize + imageSize); 
 
             imagesArray.set(image, i * imageSize);
