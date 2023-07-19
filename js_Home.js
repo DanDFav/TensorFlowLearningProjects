@@ -11,7 +11,7 @@ if(document.readyState != "loading"){
 async function run(){
     console.log("Setup some buttons later.");
 
-    handWritingMain(); 
+    speechRecogMain(); 
 }
 
 
