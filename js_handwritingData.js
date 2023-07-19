@@ -9,7 +9,7 @@ const numberOfClasses = 10;
 class data {
 
     constructor(){
-
+        this.shuffledTrainingIndex = 0; 
     }
 
     async load(){
@@ -43,6 +43,8 @@ class data {
 
         this.labels = new Uint8Array(await labelsResponse.arrayBuffer());
 
+        this.trainingIndicies = tf.util.createShuffledIndicies(numberOfTrainingSamples); 
+
         this.trainX = this.datasetImages.slice(0, imageSize * numberOfTrainingSamples); 
         this.testX = this.datasetImages.slice(imageSize * numberOfTrainingSamples);
 
@@ -51,7 +53,10 @@ class data {
     }
 
     getTrainingBatch(batchSize){
-        return this.getNextBatch(batchSize, data, index);
+        return this.getNextBatch(batchSize, [this.testX, this.trainY], ()=> {
+            this.shuffledTrainingIndex = (this.shuffledTrainingIndex + 1) % this.shuffledTrainingIndex.length;
+            return this.trainingIndicies[this.shuffledTrainingIndex]; 
+        });
     }
 
     getNextBatch(batchSize, data, index) {

@@ -54,6 +54,7 @@ async function trainModel(){
 
     await neuralNetwork.fit(
         
+        
 
     ); 
 }
