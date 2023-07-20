@@ -5,9 +5,11 @@
         <link rel="stylesheet" href="css_Home.css">
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
         <script src="https://unpkg.com/@tensorflow-models/speech-commands"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@latest"></script>
+        <script src="js_housingData.js"></script>
 
     </head>
-
+  
     <body>
         <h1>Hello </h1>
 
@@ -27,6 +29,9 @@
         <script src="js_handwriting.js"></script>
         <script src="js_speechRecog.js"></script>
         <script src="js_memoryManagement.js"></script>
+        <script src="js_housingNN.js"></script>
+        
+
 
 
         <p> 
@@ -40,6 +45,10 @@
         </div>
 
         <canvas id="drawingCanvas" width="500" height="500"></canvas>
+
+        <button id="loadButton" onclick="loadData()"> load data</button>
+        
+
 
         <!-- <textarea id="userInput">
             0,0,0,1,
