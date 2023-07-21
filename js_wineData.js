@@ -1,4 +1,4 @@
-const json_data = [
+const jsonWineData = [
   {
     "fixed_acidity": 7.4,
     "volatile_acidity": 0.7,
