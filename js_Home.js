@@ -12,6 +12,7 @@ async function run(){
     console.log("Setup some buttons later.");
 
     //housingMain(); 
+    wineMain();
 }
 
 

@@ -7,6 +7,7 @@
         <script src="https://unpkg.com/@tensorflow-models/speech-commands"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@latest"></script>
         <script src="js_housingData.js"></script>
+        <script type="text/javascript" src="js_wineData.js"></script>
 
     </head>
   
@@ -30,7 +31,7 @@
         <script src="js_speechRecog.js"></script>
         <script src="js_memoryManagement.js"></script>
         <script src="js_housingNN.js"></script>
-        
+        <script src="js_wineNN.js"></script>
 
 
 
@@ -39,15 +40,22 @@
             <a href="https://youtube.com"> Youtube.com </a>         
         </p>
 
-        <div>
+        <!-- <div>
             <textarea name="" id="userInputPos" cols="30" rows="10"></textarea>
 
-        </div>
-
-        <canvas id="drawingCanvas" width="500" height="500"></canvas>
+        </div> -->
+        <p> Enter size to predict price</p> 
+        <textarea name="" id="userInputHousing" cols="25" rows="2"> 3.3 </textarea> <br>
 
         <button id="loadButton" onclick="loadData()"> load data</button>
-        <button id="runModel" onclick="runHousingModel()"> run model </button>
+        <button id="runModel" onclick="runHousingModel()"> run model </button> <br>
+        <button id="predictButton" onclick="showHousePrediction()"> predict</button>
+
+
+
+        <canvas id="drawingCanvas" width="500" height="500"  ></canvas>
+
+
 
 
         <!-- <textarea id="userInput">

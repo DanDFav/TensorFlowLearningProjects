@@ -2,6 +2,49 @@ let tensorHousingData;
 let trainedHousingModel; 
 
 
+function showHousePrediction(){
+    let userInput = document.getElementById("userInputHousing").value.split(",").map(val => parseFloat(val)); 
+
+    predictHousePrice(json_housingData, tensorHousingData, userInput);   
+} 
+
+function predictHousePrice(json_housingData, tensorHousingData, userInput){
+    const {xMax, xMin, yMax, yMin} = tensorHousingData;
+    
+    const [inputValues, prediction] = tf.tidy(()=>{
+
+        userInputTensor = tf.tensor2d(userInput, [userInput.length, 1]);
+
+        const inputNormalised = userInputTensor.sub(xMin).div(xMax.sub(xMin)); 
+
+        const inputValues = inputNormalised; 
+        const prediction  = trainedHousingModel.predict(inputValues).reshape([userInput.length, 1]);
+
+        const xUnnormalised = inputValues.mul(xMax.sub(xMin)).add(xMin);
+        const yUnnormalised = prediction.mul(yMax.sub(yMin)).add(yMin);
+
+        return [xUnnormalised.dataSync(), yUnnormalised.dataSync()]
+    });
+
+    const originalData = json_housingData.map(entry => ({
+        x: entry.size, 
+        y: entry.price
+    }))
+
+    const predictedData = Array.from(inputValues).map((value, index) => {
+        return {x: value, y: prediction[index]}
+    })
+
+    tfvis.render.scatterplot(
+        {name: "Model Predictions vs Original Data"}, 
+        {values: [originalData, predictedData], 
+        series: ["originalData", "predicted Data"]}, 
+        { xLabel: "Size of Property",
+          yLabel: "Price of Property"}
+    );
+
+}
+
 async function runHousingModel(){
     const {inputs, labels} = tensorHousingData; 
 
