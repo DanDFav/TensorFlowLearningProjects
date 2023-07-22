@@ -1,7 +1,5 @@
 const allFeatures = ["fixed_acidity", "volatile_acidity", "citric_acid", ]
 
-
-
 async function wineMain(){
     const wineData = jsonWineData;
     visualiseData(wineData); 
@@ -9,7 +7,39 @@ async function wineMain(){
     const wineModel = buildWineModel(); 
     tfvis.show.modelSummary({name: "summary"}, wineModel)
 
-    processWineData(jsonWineData); 
+    const processedData = processWineData(jsonWineData); 
+    const {x, y} = processedData; 
+
+    await trainModel(wineModel, x, y); 
+
+    await evaluateWineModel(wineModel, x, y); 
+}
+
+async function evaluateWineModel(wineModel, x, y){
+    const results = await wineModel.evaluate(x, y, {batchSize: 64}); 
+    console.log(results[1]);
+    results[1].print(); 
+}
+
+async function trainModel(model, x, y){
+    model.compile({
+        optimizer: tf.train.adam(), 
+        loss: 'categoricalCrossentropy', 
+        metrics: ["accuracy"]
+    });
+
+    return await model.fit(x, y, {
+        batchSize: 64, 
+        epochs: 20, 
+        shuffle: true, 
+        callbacks: tfvis.show.fitCallbacks({
+            name: "Training"}, ["loss", "accuracy"], 
+            {
+                height: 300, 
+                callbacksS: ["onEpochEnd"]
+            }
+        )
+    })
 }
 
 function processWineData(jsonWineData){
@@ -21,6 +51,18 @@ function processWineData(jsonWineData){
         
         const xTensor = tf.tensor2d(x, [x.length, x[0].length]);
         const yTensor = tf.oneHot(tf.tensor1d(y, 'int32'), 10);
+        
+        const xMin = xTensor.min(); const xMax = xTensor.max();
+        const yMin = yTensor.min(); const yMax = yTensor.max();
+
+        const xNormalised = xTensor.sub(xMin).div(xMax.sub(xMin)); 
+        const yNormalised = yTensor.sub(yMin).div(yMax.sub(yMin)); 
+
+        return {
+            x: xNormalised, 
+            y: yNormalised, 
+            xMax, xMin, yMax, yMin
+        }
     });
 }
 
@@ -57,7 +99,7 @@ function buildWineModel(){
     wineModel.add(tf.layers.dense({
         units: 30, 
         useBias: true, 
-        activation: "sigmoid"
+        activation: "relu"
     })); 
 
     wineModel.add(tf.layers.dense({
